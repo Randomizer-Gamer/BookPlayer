@@ -5,16 +5,27 @@ on:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: xcode-27
+    timeout-minutes: 30
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Select Xcode 16
+      - name: Select Xcode 27.1
         run: |
-          XCODE_16=$(ls -d /Applications/Xcode_16*.app 2>/dev/null | sort -V | tail -n 1)
-          echo "Using $XCODE_16"
-          sudo xcode-select -s "$XCODE_16/Contents/Developer"
+          ls -1 /Applications | grep -E '^Xcode_27' || true
+          sudo xcode-select -s "/Applications/Xcode_27.1.app"
+          xcodebuild -version
+
+      - name: Create xcconfig files
+        run: |
+          cp ./BuildConfiguration/Debug.template.xcconfig ./BuildConfiguration/Debug.xcconfig
+          if [ -f ./BuildConfiguration/Release.template.xcconfig ]; then
+            cp ./BuildConfiguration/Release.template.xcconfig ./BuildConfiguration/Release.xcconfig
+          fi
+
+      - name: Resolve SPM dependencies
+        run: xcodebuild -resolvePackageDependencies
 
       - name: Build Unsigned Archive
         run: |
@@ -42,3 +53,4 @@ jobs:
         with:
           name: BookPlayer-Unsigned-IPA
           path: ${{ runner.temp }}/BookPlayer.ipa
+
