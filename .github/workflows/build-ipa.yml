@@ -1,0 +1,39 @@
+name: Build Unsigned BookPlayer IPA
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Select latest Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+
+      - name: Build Unsigned Archive
+        run: |
+          xcodebuild archive \
+            -project BookPlayer.xcodeproj \
+            -scheme BookPlayer \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath $RUNNER_TEMP/BookPlayer.xcarchive \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Package IPA
+        run: |
+          mkdir -p $RUNNER_TEMP/Payload
+          cp -r $RUNNER_TEMP/BookPlayer.xcarchive/Products/Applications/BookPlayer.app $RUNNER_TEMP/Payload/
+          cd $RUNNER_TEMP
+          zip -r BookPlayer.ipa Payload
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BookPlayer-Unsigned-IPA
+          path: ${{ runner.temp }}/BookPlayer.ipa
