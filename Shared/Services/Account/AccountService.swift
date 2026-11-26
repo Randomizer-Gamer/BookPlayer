@@ -273,18 +273,8 @@ public final class AccountService: AccountServiceProtocol {
     refundDates.contains { $0 == nil }
   }
 
-  public func getAccessLevel() -> AccessLevel {
-    // The pro entitlement is checked explicitly first: a user holding BOTH pro and lite
-    // (e.g. mid-crossgrade) must resolve to the higher tier, not fall through to lite.
-    if Purchases.shared.cachedCustomerInfo?.entitlements.all["pro"]?.isActive == true {
-      return .pro
-    } else if hasLiteEnabled() {
-      return .lite
-    } else if hasPlusAccess() {
-      return .plus
-    } else {
-      return .free
-    }
+   public func getAccessLevel() -> AccessLevel {
+    return .pro
   }
 
   private func getSubscriptionInfo(from customerInfo: CustomerInfo) -> SubscriptionInfo? {
