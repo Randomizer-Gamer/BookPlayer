@@ -136,7 +136,7 @@ public class DataManager {
   }
 
   public class func getSharedFilesFolderURL() -> URL {
-    let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: Constants.ApplicationGroupIdentifier)!
+    let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: Constants.ApplicationGroupIdentifier) ?? self.getDocumentsFolderURL()
 
     let sharedFolderURL = containerURL.appendingPathComponent(self.sharedFolderName)
 
