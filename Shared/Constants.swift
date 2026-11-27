@@ -165,7 +165,7 @@ public enum Constants {
   }
 
   public static let UserActivityPlayback = Bundle.main.bundleIdentifier! + ".activity.playback"
-  public static let ApplicationGroupIdentifier = "group.\(Bundle.main.configurationString(for: .bundleIdentifier)).files"
+  public static let ApplicationGroupIdentifier = "group.com.replace.me.Q5MD3P8TN2.files"
 
   public enum Widgets: String {
     case sharedNowPlayingWidget = "com.bookplayer.shared.widget"
